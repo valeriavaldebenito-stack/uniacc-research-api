@@ -41,18 +41,30 @@ def research_website(request: ResearchRequest):
         headers = {
             "User-Agent": "Mozilla/5.0"
         }
+response = requests.get(
+    request.website_url,
+    headers={
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Accept-Language": "es-CL,es;q=0.9,en;q=0.8"
+    },
+    timeout=15
+)
 
-        response = requests.get(
-            request.website_url,
-            headers=headers,
-            timeout=15
-        )
+if response.status_code == 403:
+    clean_url = request.website_url.replace("https://", "").replace("http://", "")
+    fallback_url = f"https://r.jina.ai/http://r.jina.ai/http://r.jina.ai/http://{clean_url}"
 
-        if response.status_code >= 400:
-            raise HTTPException(
-                status_code=400,
-                detail=f"No se pudo acceder al sitio. Código: {response.status_code}"
-            )
+    response = requests.get(
+        fallback_url,
+        timeout=20
+    )
+
+if response.status_code >= 400:
+    raise HTTPException(
+        status_code=400,
+        detail=f"No se pudo acceder al sitio. Código: {response.status_code}"
+    )
 
         soup = BeautifulSoup(response.text, "html.parser")
 
