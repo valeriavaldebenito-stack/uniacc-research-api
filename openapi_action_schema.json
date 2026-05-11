@@ -1,0 +1,119 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "UNIACC Website Research API",
+    "description": "Investiga UNIACC, revisa páginas internas, detecta brochures/PDFs y responde preguntas.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://TU-SERVICIO.onrender.com"
+    }
+  ],
+  "paths": {
+    "/research-website": {
+      "post": {
+        "operationId": "researchUNIACC",
+        "summary": "Investigar sitio web UNIACC",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResearchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Investigación completada correctamente",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResearchResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ResearchRequest": {
+        "type": "object",
+        "required": [
+          "questions"
+        ],
+        "properties": {
+          "website_url": {
+            "type": "string",
+            "format": "uri",
+            "default": "https://www.uniacc.cl"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "max_pages_to_review": {
+            "type": "integer",
+            "default": 12
+          },
+          "download_brochures": {
+            "type": "boolean",
+            "default": true
+          },
+          "include_program_pages": {
+            "type": "boolean",
+            "default": true
+          },
+          "extract_prices": {
+            "type": "boolean",
+            "default": true
+          },
+          "language": {
+            "type": "string",
+            "default": "es"
+          }
+        }
+      },
+      "ResearchResponse": {
+        "type": "object",
+        "properties": {
+          "executive_summary": {
+            "type": "string"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "programs_detected": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "brochures_found": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "visited_pages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        }
+      }
+    }
+  }
+}
